@@ -96,7 +96,7 @@ class Initial_Data():
         dXdW = [np.insert(dXdW[i], 0, [1], axis = 0) for i in range(len(dXdW))]
         return dXdW 
 
-    #пОСКОЛЬКУ ФУНКЦИЯ АКТИВАЦИИ - ВЕЩЕСТВЕННОЕ ЧИСЛО, ТО ЕЕ ВИД F(Y) = Y И ПРИ ВЗЯТИИ ПРО-ОЙ - ЭТО 1 
+    #ПОСКОЛЬКУ ФУНКЦИЯ АКТИВАЦИИ - ВЕЩЕСТВЕННОЕ ЧИСЛО, ТО ЕЕ ВИД F(Y) = Y И ПРИ ВЗЯТИИ ПРО-ОЙ - ЭТО 1 
     
     
     def dYdX(self):
@@ -121,7 +121,6 @@ class Initial_Data():
         return [[sum([a_dy[j][i]*a_dYdx[j][i][k] for i in range(self.layer_perc)]) 
                  for k in range(len(self.W[-1]))] for j in range(len(self.arrX))]
     
-    #ПЕРЕМЕННАЯ ДАННОЙ ФУНКЦИИ -- ВЫХОД ФУНКЦИИ  Inters_sub_layer  
     
     
     def computeGrad(self, a_SummErrors, f = 1):
@@ -330,7 +329,6 @@ class Main():
 				y = self.pos_y(ind) + (i+1)*o
 			self.pos[vert_name_A] = [x, y]
 			y = self.pos_y(ind+1)
-			'''o +=2'''
 			if ind == self.n_last_layer:
 				iterat = range(0, len(self.Marks[ind+1]))
 			else:
@@ -426,8 +424,7 @@ class Main():
 			return 0
 		else:
 			return 1
-	#elif i == self.N_layers-1:
-	#return self.N * (2**self.pow_2(i)) * self.M_Y * (w**Pow)'''
+			
 	def eta_n(self,i):
 		w = 1/4
 		Pow = self.N_layers-1 - i

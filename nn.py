@@ -23,20 +23,37 @@ class Initial_Data():
         self.layer_perc = first_layer_perc
         self.arrX = arrX
         if f == "f":
-            self.Grad = np.array([[[0 for row in range(self.layer_perc)] for j in range(2)]])
+            self.Grad = np.array([[[0 for row in range(self.layer_perc)
+									  ] 
+									  for j in range(2)]
+									  ]
+									  )
         else:
-            self.Grad = np.array([[[0 for row in range(self.layer_perc)] for j in range(len(self.arrX[0])+1)],])
+            self.Grad = np.array([[[0 for row in range(self.layer_perc)
+									  ] 
+								      for j in range(len(self.arrX[0])+1)
+									  ],
+									  ]
+									  )
         
         self.arrY = arrY
         self.W = []
         
     def Ws_f_first(self):
-        ws  = [[np.random.uniform(-(1/4), (1/4)) for i in range(self.layer_perc)] for i in range(2)]
+        ws  = [[np.random.uniform(-(1/4), (1/4)) 
+								for i in range(self.layer_perc)
+								] 
+								for i in range(2)
+								]
         return ws
     
     
     def Ws(self):
-        ws  = [[np.random.uniform(-(1/4), (1/4)) for i in range(self.layer_perc)] for i in range(len(self.arrX[0])+1)]
+        ws  = [[np.random.uniform(-(1/4), (1/4)) 
+								for i in range(self.layer_perc)
+								] 
+								for i in range(len(self.arrX[0])+1)
+								]
         return ws
     
 
@@ -44,7 +61,11 @@ class Initial_Data():
     def WsdependsFrom(self):
         MaxR = max(self.arrY)
         MinR = min(self.arrY)
-        ws  = [[np.random.uniform(MinR, MaxR) for i in range(self.layer_perc)] for i in range(len(self.arrX[0])+1)]
+        ws  = [[np.random.uniform(MinR, MaxR) 
+								for i in range(self.layer_perc)
+								] 
+								for i in range(len(self.arrX[0])+1)
+								]
         return ws
 
     
@@ -60,66 +81,125 @@ class Initial_Data():
             X = [[self.arrX[i]] for i in range(len(self.arrX))]
         else:
             X = self.arrX
-        return [np.matmul(np.insert(X[i], 0, 1), self.W[-1]) for i in range(len(self.arrX))]
+        return [np.matmul(np.insert(X[i], 0, 1), self.W[-1]) 
+							for i in range(len(self.arrX))
+							]
 
     
 
     def perceptronsValues(self):
         summ = self.summWX()
-        return [[(2/np.pi)*np.arctan(summ[i][j]) for j in range(len(summ[i]))] for i in range(len(self.arrX))]
+        return [[(2/np.pi)*np.arctan(summ[i][j]) 
+							for j in range(len(summ[i]))
+							] 
+							for i in range(len(self.arrX))
+							]
 
 
     def dP(self):
         summ = self.summWX()
-        return [[(2/np.pi)*(1/((summ[i][j]**2)+1)) for j in range(len(summ[i]))] for i in range(len(summ))]
+        return [[(2/np.pi)*(1/((summ[i][j]**2)+1)) 
+							for j in range(len(summ[i]))
+							] 
+							for i in range(len(summ))
+							]
 
     
     def dXdW(self):
         dP = self.dP()
-        dXdW = [[[dP[row][k]*self.arrX[row] for k in range(len(dP[row]))]] for row in range(len(dP))]
-        dXdW = [np.insert(dXdW[i], 0, dP[i], axis = 0) for i in range(len(dXdW))]
+        dXdW = [[[dP[row][k]*self.arrX[row] 
+							for k in range(len(dP[row]))
+							]
+							] 
+							for row in range(len(dP))
+							]
+        dXdW = [np.insert(dXdW[i], 0, dP[i], axis = 0) 
+							for i in range(len(dXdW))
+							]
         return dXdW
     
 
     #для промежуточных слоев (--- всех кроме первого и последнего)
     def dXdW_P(self):
         dP = self.dP()
-        dXdW = [[[dP[row][k]*self.arrX[row][x] for k in range(len(dP[row]))] for x in range(len(self.arrX[row]))] for row in range(len(dP))]
-        dXdW = [np.insert(dXdW[i], 0, dP[i], axis = 0) for i in range(len(dXdW))]
+        dXdW = [[[dP[row][k]*self.arrX[row][x] 
+							for k in range(len(dP[row]))
+							] 
+							for x in range(len(self.arrX[row]))
+							] 
+							for row in range(len(dP))
+							]
+        dXdW = [np.insert(dXdW[i], 0, dP[i], axis = 0) 
+							for i in range(len(dXdW))
+							]
         return dXdW
     
 
     
     
     def dXdW_R(self):
-        dXdW = [[[self.arrX[row][k] for i in range(self.layer_perc)] for k in range(len(self.arrX[row]))] for row in range(len(self.arrX))]
-        dXdW = [np.insert(dXdW[i], 0, [1], axis = 0) for i in range(len(dXdW))]
+        dXdW = [[[self.arrX[row][k] 
+							for i in range(self.layer_perc)
+							] 
+							for k in range(len(self.arrX[row]))
+							] 
+							for row in range(len(self.arrX))
+							]
+        dXdW = [np.insert(dXdW[i], 0, [1], axis = 0) 
+							for i in range(len(dXdW))
+							]
         return dXdW 
 
     #ПОСКОЛЬКУ ФУНКЦИЯ АКТИВАЦИИ - ВЕЩЕСТВЕННОЕ ЧИСЛО, ТО ЕЕ ВИД F(Y) = Y И ПРИ ВЗЯТИИ ПРО-ОЙ - ЭТО 1 
     
     
     def dYdX(self):
-        return [[[self.W[-1][j][i]*1 for j in range(len(self.W[-1]))] for i in range(self.layer_perc)] for k in range(len(self.arrX))]
+        return [[[self.W[-1][j][i]*1 
+							for j in range(len(self.W[-1]))
+							] 
+							for i in range(self.layer_perc)
+							] 
+							for k in range(len(self.arrX))
+							]
     
 
     def dYdX_Not_Real(self):
         dP = self.dP()
-        return [[[self.W[-1][j][i]*dP[k][i] for j in range(len(self.W[-1]))] for i in range(self.layer_perc)] for k in range(len(self.arrX))]
+        return [[[self.W[-1][j][i]*dP[k][i] 
+							for j in range(len(self.W[-1]))
+							] 
+							for i in range(self.layer_perc)
+							] 
+							for k in range(len(self.arrX))
+							]
     
     
     def dy(self, y_obs):
         if self.layer_perc ==1:
-            dy = [[2*(self.arrY[j] - y_obs[j][i]) for i in range(self.layer_perc)] for j in range(len(self.arrY))]
+            dy = [[2*(self.arrY[j] - y_obs[j][i]) 
+							for i in range(self.layer_perc)
+							] 
+							for j in range(len(self.arrY))
+							]
         else:
-            dy = [[[2*(self.arrY[j][i] - y_obs[j][i])] for i in range(self.layer_perc)] for j in range(len(self.arrY))]
+            dy = [[[2*(self.arrY[j][i] - y_obs[j][i])] 
+							for i in range(self.layer_perc)
+							] 
+							for j in range(len(self.arrY))
+							]
         
         return dy
         
     
     def Inters_sub_layer(self, a_dy, a_dYdx):
-        return [[sum([a_dy[j][i]*a_dYdx[j][i][k] for i in range(self.layer_perc)]) 
-                 for k in range(len(self.W[-1]))] for j in range(len(self.arrX))]
+        return [[sum([a_dy[j][i]*a_dYdx[j][i][k] 
+							for i in range(self.layer_perc)
+							]
+							)
+							for k in range(len(self.W[-1]))
+							] 
+							for j in range(len(self.arrX))
+							]
     
     
     
@@ -129,12 +209,22 @@ class Initial_Data():
         else:
             The_dXdW = self.dXdW_P()
         a_SummErrors = [a_SummErrors[i][1:] for i in range(len(a_SummErrors))]
-        return [[sum([a_SummErrors[k][j] * The_dXdW[k][i][j] for k in range(len(self.arrX))]) for j in range(self.layer_perc)] for i in range(len(self.W[-1]))]
+        return [[sum([a_SummErrors[k][j] * The_dXdW[k][i][j] 
+							for k in range(len(self.arrX))]) 
+							for j in range(self.layer_perc)
+							] 
+							for i in range(len(self.W[-1]))
+							]
     
     
     def computeGrad_R(self, a_SummErrors):
         The_dXdW = self.dXdW_R()
-        return [[sum([a_SummErrors[k][j] * The_dXdW[k][i][j] for k in range(len(self.arrX))]) for j in range(self.layer_perc)] for i in range(len(self.W[-1]))]
+        return [[sum([a_SummErrors[k][j] * The_dXdW[k][i][j] 
+							for k in range(len(self.arrX))]) 
+							for j in range(self.layer_perc)
+							] 
+							for i in range(len(self.W[-1]))
+							]
 
     def add_Grad(self, aGrad):
         self.delete()
@@ -160,8 +250,19 @@ class NN():
         self.__A = 0.2
         self.AmoutError = 0.25
         self.Obj = init_obj
-        self.E = np.array([[[self.__A for row in range(self.Obj.layer_perc)] for i in range(len(self.Obj.W[-1]))]])
-        self.listExpCurrPastDervs = np.array([[[(1-self.__Treshold)*self.E[-1][i][row] for row in range(self.Obj.layer_perc)] for i in range(len(self.Obj.W[-1]))] for m in range(2)]) 
+        self.E = np.array([[[self.__A 
+							for row in range(self.Obj.layer_perc)
+							] 
+							for i in range(len(self.Obj.W[-1]))]]
+							)
+        self.listExpCurrPastDervs = np.array([[[(1-self.__Treshold)*self.E[-1][i][row] 
+							for row in range(self.Obj.layer_perc)
+							] 
+							for i in range(len(self.Obj.W[-1]))
+							] 
+							for m in range(2)
+							]
+							) 
     
     
     def scale(self, m):
@@ -210,7 +311,11 @@ class NN():
     
     def Delta_Bar_Delta(self):
         self.add_expCurrPastDrvs()
-        return [[self.listExpCurrPastDervs[-2][row][i] * self.Obj.Grad[-1][row][i] for i in range(self.Obj.layer_perc)] for row in range(len(self.Obj.W[-1]))]
+        return [[self.listExpCurrPastDervs[-2][row][i] * self.Obj.Grad[-1][row][i] 
+							for i in range(self.Obj.layer_perc)
+							] 
+							for row in range(len(self.Obj.W[-1]))
+							]
     
     def add_dE(self,m, Max, tau):
         self.E = np.append(self.E, [self.amoutUpdateCoefs(m, Max, tau)], axis = 0)
@@ -218,7 +323,11 @@ class NN():
     def amoutUpdateCoefs(self,m, Max, tau):
         delta_B_delta = self.Delta_Bar_Delta()
         "k**x, fi**x  = k**3.2, fi**3"
-        return [[self.__K*tau if delta_B_delta[row][i]>0 else -self.__FI*self.E[-1][row][i]*tau if delta_B_delta[row][i]<0 else 0 for i in range(self.Obj.layer_perc)] for row in range(len(self.Obj.W[-1]))]
+        return [[self.__K*tau if delta_B_delta[row][i]>0 else -self.__FI*self.E[-1][row][i]*tau if delta_B_delta[row][i]<0 else 0 
+							for i in range(self.Obj.layer_perc)
+							] 
+							for row in range(len(self.Obj.W[-1]))
+							]
     
     def updateCoefficients(self, m, Max, tau):
         self.add_dE(m, Max, tau)
@@ -258,12 +367,20 @@ class Main():
 		self.Ymax = max(max(testPonts))
 		self.Marks = [[""] + ["X="] if l == 0 
                        else ["Y=" for j in range(self.n_perc[l-1])] if l == self.N_layers 
-                       else ["L" + str(l+1) +"_BIAS" ] + ["L" + str(l+1) + "_" + str(j+1) + "=" for j in range(self.n_perc[l-1])]  for l in range(self.N_layers+1)]
+                       else ["L" + str(l+1) +"_BIAS" ] + ["L" + str(l+1) + "_" + str(j+1) + "=" 
+					   for j in range(self.n_perc[l-1])
+					   ]  
+					   for l in range(self.N_layers+1)
+					   ]
+					   
 		self.G = nx.Graph()
 		self.point_X = int(len(self.points)/2)
 		self.pos = {} 
 		self.M_X = np.mean(self.points)
-		self.M_Y = np.mean([point for Set in self.testPoints for point in Set])
+		self.M_Y = np.mean([point 
+						for Set in self.testPoints 
+						for point in Set]
+						)
 		self.N = len(self.points)
 		self.n_func_1 = "1"
 		self.n_func_2 = "2"

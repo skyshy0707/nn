@@ -379,28 +379,43 @@ class Main():
 		self.Ys_fit(X, Y, True)
 		self.graf()
 		self.update_graf()
+		
+	
+	def compute_Dy(layer_num, Dx=None, obs_Y=None):
+		if Dx:
+			return Dx
+		return self.L[layer_num].dy(obs_Y)
+	
+	def compute_dydx(layer_num,):
+		if layer_num == self.n_last_layer:
+			return self.L[layer_num].dYdX()
+		return self.L[layer_num].dYdX_Not_Real()
+	
+		
+	def compute_Dx(layer_num, Dy, dydx):
+		return self.L[layer_num].Inters_sub_layer(Dy, dydx)
+
+	def addGrad(layer_num):
+		if layer_num == self.n_last_layer:
+			dE = self.L[i].computeGrad_R(Dy)
+		elif layer_num == 0:
+			dE = self.L[i].computeGrad(Dy, 1)
+		else:
+			dE = self.L[i].computeGrad(Dy, 0)
+		self.L[i].add_Grad(dE)
+	
+	def compute_obsY(layer_num):
+		if layer_num == self.n_last_layer:
+			return self.L[layer_num].summWX()
 	
 	def fitting(self, N_example):
+		Dx=None
 		for i in reversed(range(self.N_layers)):
-			if i == self.n_last_layer:
-				obs_Y = self.L[i].summWX()
-				Dy = self.L[i].dy(obs_Y)
-				dydx = self.L[i].dYdX()
-				Dx = self.L[i].Inters_sub_layer(Dy, dydx)
-				dE = self.L[i].computeGrad_R(Dy)
-				self.L[i].add_Grad(dE)
-			elif i == 0:
-				Dy = Dx
-				dydx = self.L[i].dYdX_Not_Real()
-				Dx = self.L[i].Inters_sub_layer(Dy, dydx)
-				dE = self.L[i].computeGrad(Dy, 1)
-				self.L[i].add_Grad(dE)
-			else:
-				Dy = Dx
-				dydx = self.L[i].dYdX_Not_Real()
-				Dx = self.L[i].Inters_sub_layer(Dy, dydx)
-				dE = self.L[i].computeGrad(Dy, 0)
-				self.L[i].add_Grad(dE)
+			obs_Y = self.compute_obsY(i)
+			Dy = self.compute_Dy(i, obs_Y, Dx)
+			dydx = self.compute_dydx(i)
+			Dx = self.compute_Dx(i, Dy, dydx)
+			self.addGrad(i)
 
 	def make_Delta_bar_Delta_obj(self):
 		for i in range(self.N_layers):
@@ -584,7 +599,7 @@ class Main():
 		self.Outputs.append(my_Ys)
 		print("error:", self.ERROR, "num iteratons:", count)
 
-class Plotting():#рисует графики при тех же x-ах с рахзными y-ками
+class Plotting():#строит разл. графики при одинаковых значений x
 
 	def __init__(self,List_orditates,  Xs, SecondYs, names):
 		self.Y = List_orditates + [SecondYs]
